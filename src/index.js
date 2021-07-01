@@ -17,6 +17,6 @@ refs.list.scrollIntoView({
 fetchApi().then(img=> console.log(img))
 
 refs.form.addEventListener('submit', (e) =>{
-    e.preventDefault(   )
+    e.preventDefault()
 
 })
