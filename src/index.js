@@ -1,27 +1,56 @@
 import './sass/main.scss';
-import fetchApi from './js/apiService';
+import  PhotosApiService from './js/apiService';
 import itemsTpl from './templates/gallery.hbs'
+import LoadMoreBtn from './js/more-btn';
+const ImageService = new PhotosApiService();
+const LoadMoreButton = new LoadMoreBtn({
+  selector: '.btn',
+  hidden: true,
+});
 
 const refs = {
  form: document.querySelector('#search-form'),
  list: document.querySelector('.gallery'),
-btn: document.querySelector('.load-more-btn'),
+btn: document.querySelector('.btn'),
 
 }
 
 
-refs.list.scrollIntoView({
-  behavior: 'smooth',
-  block: 'end',
-});
+refs.btn.addEventListener('click', fetchItems())
+refs.form.addEventListener('submit', onSearchImage())
 
 
-refs.form.addEventListener('submit', (e) =>{
-    e.preventDefault()
-    const inputValue = e.target.elements.query.value
- fetchApi(inputValue).then(r => r.json()).then(image=> appendItemsMarkup(image)).catch(error => console.log(error))
-})
+function onSearchImage(event){
+  // event.preventDefault();
+
+  clearGalleryList()
+  ImageService.value = event.currentTarget.elements.query.value
+
+  if(ImageService.value === ' '){
+    LoadMoreButton.disable()
+  }
+  LoadMoreButton.show();
+  ImageService.resetPage();
+  fetchItems();
+}
+ 
 
 function appendItemsMarkup(image){
-    refs.list.insertAdjacentHTML('beforeend', itemsTpl(image))
+   return refs.list.insertAdjacentHTML('beforeend', itemsTpl(image))
+}
+
+function clearGalleryList() {
+  refs.list.innerHTML = '';
+}
+function fetchItems() {
+  LoadMoreButton.disable();
+  return ImageService.fetchImages().then(images => {
+    appendItemsMarkup(images);
+
+    LoadMoreButton.enable();
+
+    if (images.length === 0) {
+      LoadMoreButton.hide();
+    }
+  });
 }
