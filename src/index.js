@@ -16,17 +16,17 @@ btn: document.querySelector('.btn'),
 }
 
 
-refs.btn.addEventListener('click', fetchItems())
-refs.form.addEventListener('submit', onSearchImage())
+refs.btn.addEventListener('click', fetchItems)
+refs.form.addEventListener('submit', onSearchImage)
 
 
 function onSearchImage(event){
-  // event.preventDefault();
+  event.preventDefault();
 
   clearGalleryList()
   ImageService.value = event.currentTarget.elements.query.value
 
-  if(ImageService.value === ' '){
+  if(ImageService.value === ''){
     LoadMoreButton.disable()
   }
   LoadMoreButton.show();
@@ -34,10 +34,6 @@ function onSearchImage(event){
   fetchItems();
 }
  
-
-function appendItemsMarkup(image){
-   return refs.list.insertAdjacentHTML('beforeend', itemsTpl(image))
-}
 
 function clearGalleryList() {
   refs.list.innerHTML = '';
@@ -49,8 +45,12 @@ function fetchItems() {
 
     LoadMoreButton.enable();
 
-    if (images.length === 0) {
-      LoadMoreButton.hide();
-    }
+    // if (images.length === 0) {
+    //   LoadMoreButton.hide();
+    // }
   });
+}
+
+function appendItemsMarkup(image){
+  refs.list.insertAdjacentHTML('beforeend', itemsTpl(image))
 }

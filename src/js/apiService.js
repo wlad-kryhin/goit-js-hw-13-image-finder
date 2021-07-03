@@ -8,7 +8,7 @@ export default class PhotosApiService {
     }
 
     async fetchImages(){
-        const searchUrl = await fetch(`${BASE_URL}q=${this.searchQuery}&page=${this.page}&per_page=12&key=${KEY}`)
+        const searchUrl = await fetch(`${BASE_URL}&q=${this.searchValue}&page=${this.page}&per_page=12&key=${KEY}`)
         const {list : images } = await searchUrl.json();
         this.incrementPage()
         return images 
@@ -23,10 +23,10 @@ export default class PhotosApiService {
     }
 
     get value(){
-        return this.value 
+        return this.searchValue 
     }
 
     set value(newValue){
-        return this.value = newValue
+    this.searchValue = newValue
     }
 }
