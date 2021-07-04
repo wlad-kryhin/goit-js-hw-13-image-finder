@@ -1,32 +1,37 @@
-const BASE_URL = 'https://pixabay.com/api/?image_type=photo&orientation=horizontal';
-const KEY = '22313175-89def84c9551dc3c20db3bc15'
 
-export default class PhotosApiService {
-    constructor(){ 
-        this.searchValue = ' ';
-        this.page = 1;
-    }
+const BASE_URL = 'https://pixabay.com/api';
+const KEY = '22313175-89def84c9551dc3c20db3bc15';
 
-    async fetchImages(){
-        const searchUrl = await fetch(`${BASE_URL}&q=${this.searchValue}&page=${this.page}&per_page=12&key=${KEY}`)
-        const {list : images } = await searchUrl.json();
-        this.incrementPage()
-        return images 
-    }
+export default class ImageApiService {
+  constructor() {
+    this.searchQuery = '';
+    this.page = 1;
+  }
 
-    incrementPage(){
-        this.page += 1
-    }
+  async fetchImage() {
+    const responseUrl = await fetch(
+      `${BASE_URL}/?image_type=photo&orientation=horizontal&q=${this.searchQuery}&page=${this.page}&per_page=12&key=${KEY}`,
+    );
 
-    resetPage(){
-        this.page = 1
-    }
+    const { hits: images } = await responseUrl.json();
+    this.incrementPage();
 
-    get value(){
-        return this.searchValue 
-    }
+    return images;
+  }
 
-    set value(newValue){
-    this.searchValue = newValue
-    }
+  incrementPage() {
+    this.page += 1;
+  }
+
+  resetPage() {
+    this.page = 1;
+  }
+
+  get query() {
+    return this.searchQuery;
+  }
+
+  set query(newQuery) {
+    this.searchQuery = newQuery;
+  }
 }

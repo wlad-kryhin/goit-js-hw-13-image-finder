@@ -1,56 +1,73 @@
 import './sass/main.scss';
-import  PhotosApiService from './js/apiService';
-import itemsTpl from './templates/gallery.hbs'
+
+import cardMarkup from './templates/gallery.hbs';
+import ImageApiService from './js/apiService';
 import LoadMoreBtn from './js/more-btn';
-const ImageService = new PhotosApiService();
-const LoadMoreButton = new LoadMoreBtn({
-  selector: '.btn',
+
+const refs = {
+  searchForm: document.querySelector('#search-form'),
+  gallery: document.querySelector('.gallery'),
+};
+
+const loadMoreBtn = new LoadMoreBtn({
+  selector: '[data-action="load-more"]',
   hidden: true,
 });
 
-const refs = {
- form: document.querySelector('#search-form'),
- list: document.querySelector('.gallery'),
-btn: document.querySelector('.btn'),
+const imageApiService = new ImageApiService();
 
-}
+refs.searchForm.addEventListener('submit', onSearch);
+loadMoreBtn.refs.button.addEventListener('click', fetchCards);
 
+function onSearch(e) {
+  e.preventDefault();
 
-refs.btn.addEventListener('click', fetchItems)
-refs.form.addEventListener('submit', onSearchImage)
+  clearGalleryContainer();
+  imageApiService.query = e.currentTarget.elements.query.value;
 
-
-function onSearchImage(event){
-  event.preventDefault();
-
-  clearGalleryList()
-  ImageService.value = event.currentTarget.elements.query.value
-
-  if(ImageService.value === ''){
-    LoadMoreButton.disable()
+  if (imageApiService.query === '') {
+return loadMoreBtn.disable();
   }
-  LoadMoreButton.show();
-  ImageService.resetPage();
-  fetchItems();
+
+  loadMoreBtn.show();
+  imageApiService.resetPage();
+  fetchCards();
 }
- 
 
-function clearGalleryList() {
-  refs.list.innerHTML = '';
-}
-function fetchItems() {
-  LoadMoreButton.disable();
-  return ImageService.fetchImages().then(images => {
-    appendItemsMarkup(images);
+function fetchCards() {
+  loadMoreBtn.disable();
+  return imageApiService.fetchImage().then(cards => {
+    renderMarkup(cards);
 
-    LoadMoreButton.enable();
+    scrollPage();
+    loadMoreBtn.enable();
 
-    // if (images.length === 0) {
-    //   LoadMoreButton.hide();
-    // }
+    if (cards.length === 0) {
+      loadMoreBtn.hide();
+      noMatchesFound();
+    }
   });
 }
 
-function appendItemsMarkup(image){
-  refs.list.insertAdjacentHTML('beforeend', itemsTpl(image))
+
+function renderMarkup(hits) {
+  refs.gallery.insertAdjacentHTML('beforeend', cardMarkup(hits));
+}
+
+function clearGalleryContainer() {
+  refs.gallery.innerHTML = '';
+}
+
+function scrollPage() {
+  try {
+    setTimeout(() => {
+      window.scrollTo({
+        top: document.body.scrollHeight,
+        left: 0,
+        behavior: 'smooth',
+      });
+    }, 1000);
+  } catch (error) {
+    console.log(error);
+  }
 }
