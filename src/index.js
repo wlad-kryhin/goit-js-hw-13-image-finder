@@ -1,5 +1,8 @@
 import './sass/main.scss';
-
+import { error } from '../node_modules/@pnotify/core';
+import '../node_modules/@pnotify/core/dist/BrightTheme.css';
+import '../node_modules/@pnotify/core/dist/PNotify.css';
+import modalOpen from './js/modal'
 import cardMarkup from './templates/gallery.hbs';
 import ImageApiService from './js/apiService';
 import LoadMoreBtn from './js/more-btn';
@@ -7,7 +10,9 @@ import LoadMoreBtn from './js/more-btn';
 const refs = {
   searchForm: document.querySelector('#search-form'),
   gallery: document.querySelector('.gallery'),
+  modal : document.querySelector('.modal')
 };
+
 
 const loadMoreBtn = new LoadMoreBtn({
   selector: '[data-action="load-more"]',
@@ -15,10 +20,13 @@ const loadMoreBtn = new LoadMoreBtn({
 });
 
 const imageApiService = new ImageApiService();
-
+refs.gallery.addEventListener('click', modalOpen)
 refs.searchForm.addEventListener('submit', onSearch);
 loadMoreBtn.refs.button.addEventListener('click', fetchCards);
-
+refs.modal.addEventListener('click', e =>{ if(e.target.classList.contains('modal')){
+  return  refs.modal.classList.remove('is-open')
+}
+})
 function onSearch(e) {
   e.preventDefault();
 
@@ -26,7 +34,8 @@ function onSearch(e) {
   imageApiService.query = e.currentTarget.elements.query.value;
 
   if (imageApiService.query === '') {
-return loadMoreBtn.disable();
+loadMoreBtn.disable();
+     enterSmth()
   }
 
   loadMoreBtn.show();
@@ -48,8 +57,18 @@ function fetchCards() {
     }
   });
 }
-
-
+function  noMatchesFound() {
+error({
+  text: 'No matches found. Please enter another query!',
+  delay: 1500 
+})
+}
+function enterSmth(){
+  error({
+    text: ' Please, enter something :=) ',
+    delay: 2000
+  })
+}
 function renderMarkup(hits) {
   refs.gallery.insertAdjacentHTML('beforeend', cardMarkup(hits));
 }

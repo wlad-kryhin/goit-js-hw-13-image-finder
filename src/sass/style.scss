@@ -98,3 +98,26 @@ html {
     display: flex;
     justify-content: center;
   }
+  .modal{
+    position: fixed;
+    top:0;
+    left: 0;
+    display: none;
+    width: 100vw;
+    height: 100vh;
+
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+  }
+  .modal-img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height:400px;
+    border-radius: 5px;
+  }
+  .is-open{
+    display: block;
+  }
