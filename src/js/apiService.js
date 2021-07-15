@@ -13,10 +13,11 @@ export default class ImageApiService {
       `${BASE_URL}/?image_type=photo&orientation=horizontal&q=${this.searchQuery}&page=${this.page}&per_page=12&key=${KEY}`,
     );
 
-    const { hits: images } = await responseUrl.json();
+    const { hits } = await responseUrl.json();
     this.incrementPage();
+    console.log(hits);
 
-    return images;
+    return hits;
   }
 
   incrementPage() {
